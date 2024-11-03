@@ -15,17 +15,28 @@ export class ProduitsComponent implements OnInit {
      }
 
   ngOnInit(): void {
-
-    this.produits = this.produitService.listeProduits();
-  }
-  supprimerProduit(p: Produit)
-  {
-  //console.log(p);
-  let conf = confirm("Etes-vous sûr ?");
-  if (conf)
-    this.produitService.supprimerProduit(p);
-
+    this.chargerProduits();
 
   }
+  chargerProduits(){
+    this.produitService.listeProduits().subscribe(prods => {
+    console.log(prods);
+    this.produits = prods;
+    });
+    }
+    supprimerProduit(p: Produit) {
+      let conf = confirm("Etes-vous sûr ?");
+      if (conf) {
+          if (p.idProduit !== undefined) { // Vérifiez si idProduit est défini
+              this.produitService.supprimerProduit(p.idProduit).subscribe(() => {
+                  console.log("produit supprimé");
+                  this.chargerProduits();
+              });
+          } else {
+              console.error("idProduit est indéfini");
+          }
+      }
+  }
+  
 
 }
